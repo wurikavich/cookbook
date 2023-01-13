@@ -2,34 +2,10 @@ from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.db import models
 
-from .validators import recipe_validate_name
-from ..tags.models import Tag
-from ..users.models import User
-
-
-class Ingredient(models.Model):
-    """Модель ингредиентов."""
-
-    name = models.CharField(
-        max_length=settings.MAX_LENGTH_RECIPE_FIELD,
-        unique=True,
-        validators=[recipe_validate_name],
-        verbose_name="Наименование ингредиента",
-        help_text="Добавьте ингредиент"
-    )
-    measurement_unit = models.CharField(
-        max_length=settings.MAX_LENGTH_RECIPE_FIELD,
-        verbose_name="Единица измерения",
-        help_text="Выберите единицу измерения"
-    )
-
-    class Meta:
-        ordering = ('name',)
-        verbose_name = 'Ингредиент'
-        verbose_name_plural = 'Ингредиенты'
-
-    def __str__(self):
-        return f"{self.name} ({self.measurement_unit})"
+from src.base.validators import recipe_validate_name
+from src.ingredients.models import Ingredient
+from src.tags.models import Tag
+from src.users.models import User
 
 
 class Recipe(models.Model):
@@ -37,25 +13,15 @@ class Recipe(models.Model):
 
     name = models.CharField(
         max_length=settings.MAX_LENGTH_RECIPE_FIELD,
-        validators=[recipe_validate_name],
         verbose_name="Название",
-        help_text="Введите название рецепта"
+        help_text="Введите название рецепта",
+        validators=[
+            recipe_validate_name
+        ]
     )
     text = models.TextField(
         verbose_name="Описание",
         help_text="Введите описание рецепта"
-    )
-    cooking_time = models.PositiveSmallIntegerField(
-        verbose_name="Время приготовления",
-        help_text="Укажите время приготовления, мин",
-        validators=[
-            MinValueValidator(
-                limit_value=1,
-                message="Время приготовления не может быть меньше 1 минуты!")]
-    )
-    created = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name="Дата создания"
     )
     author = models.ForeignKey(
         User,
@@ -81,6 +47,20 @@ class Recipe(models.Model):
         related_name='+',
         verbose_name="Ингредиенты",
         help_text="Выберите ингредиенты"
+    )
+    cooking_time = models.PositiveSmallIntegerField(
+        verbose_name="Время приготовления",
+        help_text="Укажите время приготовления, мин",
+        validators=[
+            MinValueValidator(
+                limit_value=1,
+                message="Время приготовления не может быть меньше 1 минуты!"
+            )
+        ]
+    )
+    created = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Дата создания"
     )
 
     class Meta:
@@ -115,7 +95,9 @@ class IngredientRecipe(models.Model):
         validators=[
             MinValueValidator(
                 limit_value=1,
-                message="Количество ингредиента не может быть меньше 1")]
+                message="Количество ингредиента не может быть меньше 1"
+            )
+        ]
     )
 
     class Meta:
@@ -124,7 +106,8 @@ class IngredientRecipe(models.Model):
         constraints = [
             models.UniqueConstraint(
                 name='exclude the addition of an ingredient if present',
-                fields=['ingredient', 'recipe'])
+                fields=['ingredient', 'recipe']
+            )
         ]
 
     def __str__(self):
@@ -158,7 +141,8 @@ class Favourite(models.Model):
         constraints = [
             models.UniqueConstraint(
                 name='exclude the addition to favorites, if present',
-                fields=['user', 'recipe'])
+                fields=['user', 'recipe']
+            )
         ]
 
     def __str__(self):
@@ -192,7 +176,8 @@ class Purchases(models.Model):
         constraints = [
             models.UniqueConstraint(
                 name='exclude the addition to shopping list,if present',
-                fields=['user', 'recipe'])
+                fields=['user', 'recipe']
+            )
         ]
 
     def __str__(self):

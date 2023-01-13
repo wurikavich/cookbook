@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
-from .models import Follow, User
-from ..recipes.models import Recipe
+from src.recipes.models import Recipe
+from src.users.models import Follow, User
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -19,7 +19,8 @@ class UserSerializer(serializers.ModelSerializer):
             'username',
             'first_name',
             'last_name',
-            'is_subscribed')
+            'is_subscribed'
+        )
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request')
@@ -63,7 +64,8 @@ class FollowSerializer(serializers.ModelSerializer):
             'last_name',
             'is_subscribed',
             'recipes',
-            'recipes_count')
+            'recipes_count'
+        )
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request')

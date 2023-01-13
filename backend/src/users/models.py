@@ -17,8 +17,10 @@ class User(AbstractUser):
         unique=True,
         verbose_name="Логин",
         help_text="Придумайте уникальный логин",
-        validators=[UnicodeUsernameValidator(),
-                    validate_prohibited_name]
+        validators=[
+            UnicodeUsernameValidator(),
+            validate_prohibited_name
+        ]
     )
     email = models.EmailField(
         max_length=settings.MAX_LENGTH_USER_EMAIL,
@@ -28,15 +30,19 @@ class User(AbstractUser):
     )
     first_name = models.CharField(
         max_length=settings.MAX_LENGTH_USER_MODEL_FIELD,
-        validators=[user_validate_name],
         verbose_name="Имя",
-        help_text="Введите своё имя"
+        help_text="Введите своё имя",
+        validators=[
+            user_validate_name
+        ]
     )
     last_name = models.CharField(
         max_length=settings.MAX_LENGTH_USER_MODEL_FIELD,
-        validators=[user_validate_name],
         verbose_name="Фамилия",
-        help_text="Введите свою фамилию"
+        help_text="Введите свою фамилию",
+        validators=[
+            user_validate_name
+        ]
     )
 
     class Meta:
@@ -69,10 +75,12 @@ class Follow(models.Model):
         constraints = [
             models.UniqueConstraint(
                 name='exclude a new subscription when it is valid',
-                fields=['user', 'author']),
+                fields=['user', 'author']
+            ),
             models.CheckConstraint(
                 name='disable subscribe to yourself',
-                check=~models.Q(user=models.F('author')))
+                check=~models.Q(user=models.F('author'))
+            )
         ]
 
     def __str__(self):

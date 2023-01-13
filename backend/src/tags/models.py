@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.db import models
 
-from .validators import ColorValidator, NameValidator, SlugValidator
+from src.tags.validators import ColorValidator, NameValidator, SlugValidator
 
 
 class Tag(models.Model):
@@ -10,24 +10,29 @@ class Tag(models.Model):
     name = models.CharField(
         max_length=settings.MAX_LENGTH_TAG_MODEL_FIELD,
         unique=True,
-        validators=[NameValidator()],
         verbose_name="Название",
-        help_text="Введите тег"
+        help_text="Введите тег",
+        validators=[
+            NameValidator()
+        ]
     )
     color = models.CharField(
         max_length=settings.MAX_LENGTH_TAG_COLOR,
         unique=True,
-        validators=[ColorValidator()],
         verbose_name="HEX-код цвета",
-        help_text="Добавьте цвет в формате HEX-кода"
+        help_text="Добавьте цвет в формате HEX-кода",
+        validators=[
+            ColorValidator()
+        ]
     )
-
     slug = models.SlugField(
         max_length=settings.MAX_LENGTH_TAG_MODEL_FIELD,
         unique=True,
-        validators=[SlugValidator()],
         verbose_name="Slug",
-        help_text="Добавьте slug"
+        help_text="Добавьте slug",
+        validators=[
+            SlugValidator()
+        ]
     )
 
     class Meta:

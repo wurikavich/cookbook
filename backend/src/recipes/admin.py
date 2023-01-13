@@ -1,14 +1,13 @@
 from django.contrib import admin
 
-from .models import Favourite, Ingredient, IngredientRecipe, Purchases, Recipe
+from src.recipes.models import Favourite, IngredientRecipe, Purchases, Recipe
 
 
-@admin.register(Ingredient)
-class IngredientAdmin(admin.ModelAdmin):
-    """Ингредиенты."""
-    list_display = ('id', 'name', 'measurement_unit')
-    list_display_links = search_fields = ('name',)
-    list_filter = ('measurement_unit',)
+class BaseAdminControl(admin.ModelAdmin):
+    """Базовая админ панель для моделей: Favourite, Purchases."""
+    list_display = ('id', 'user', 'recipe', 'add_date')
+    list_display_links = ('user',)
+    search_fields = ('user', 'recipe')
 
 
 class IngredientAmountInline(admin.TabularInline):
@@ -44,16 +43,12 @@ class IngredientRecipeAdmin(admin.ModelAdmin):
 
 
 @admin.register(Favourite)
-class FavouriteAdmin(admin.ModelAdmin):
+class FavouriteAdmin(BaseAdminControl):
     """Рецепты добавленные в избранное."""
-    list_display = ('id', 'user', 'recipe', 'add_date')
-    list_display_links = ('user',)
-    search_fields = ('user', 'recipe')
+    pass
 
 
 @admin.register(Purchases)
-class PurchasesAdmin(admin.ModelAdmin):
+class PurchasesAdmin(BaseAdminControl):
     """Рецепты добавленные в список покупок."""
-    list_display = ('id', 'user', 'recipe', 'add_date')
-    list_display_links = ('user',)
-    search_fields = ('user', 'recipe')
+    pass

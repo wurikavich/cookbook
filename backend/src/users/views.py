@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import permissions, status, viewsets
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from src.base.pagination import CustomPagination
@@ -18,7 +19,7 @@ class UsersViewSet(viewsets.GenericViewSet):
     @action(methods=('get',),
             url_path='subscriptions',
             detail=False,
-            permission_classes=(permissions.IsAuthenticated,))
+            permission_classes=(IsAuthenticated,))
     def get_subscriptions(self, request):
         """Возвращает список подписок пользователя."""
         serializer = FollowSerializer(
@@ -30,7 +31,7 @@ class UsersViewSet(viewsets.GenericViewSet):
     @action(methods=('post', 'delete'),
             url_path='subscribe',
             detail=True,
-            permission_classes=(permissions.IsAuthenticated,))
+            permission_classes=(IsAuthenticated,))
     def subscribe(self, request, pk):
         """Подписаться/отписаться от пользователя."""
         author = get_object_or_404(User, id=pk)

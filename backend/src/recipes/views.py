@@ -3,23 +3,13 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
-from .models import Favourite, Ingredient, IngredientRecipe, Purchases, Recipe
-from .serializers import (
-    IngredientSerializer, RecipeCreateSerializer, RecipeReadSerializer)
-from ..base.filters import IngredientSearchFilter, RecipeFilter
-from ..base.pagination import CustomPagination
-from ..base.permissions import IsAdminOrReadOnly, IsAuthorOrAdminOrReadOnly
-from ..base.utils import add_object, create_pdf_file, delete_object
-
-
-class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
-    """CRUD ингредиентов."""
-    queryset = Ingredient.objects.all()
-    serializer_class = IngredientSerializer
-    permission_classes = (IsAdminOrReadOnly,)
-    filter_backends = (IngredientSearchFilter,)
-    search_fields = ('^name',)
-    pagination_class = None
+from src.base.filters import RecipeFilter
+from src.base.pagination import CustomPagination
+from src.base.permissions import IsAuthorOrAdminOrReadOnly
+from src.recipes.models import Favourite, IngredientRecipe, Purchases, Recipe
+from src.recipes.serializers import (
+    RecipeCreateSerializer, RecipeReadSerializer)
+from src.recipes.utils import add_object, create_pdf_file, delete_object
 
 
 class RecipeViewSet(viewsets.ModelViewSet):

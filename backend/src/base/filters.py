@@ -1,14 +1,14 @@
 from django_filters import rest_framework as filters
 from rest_framework.filters import SearchFilter
 
-from .utils import get_queryset
-from ..recipes.models import Recipe
-from ..tags.models import Tag
-from ..users.models import User
+from src.base.utils import get_queryset
+from src.recipes.models import Recipe
+from src.tags.models import Tag
+from src.users.models import User
 
 
 class IngredientSearchFilter(SearchFilter):
-    """Поиск ингредиента по названию."""
+    """Поиск ингредиентов по названию."""
 
     search_param = 'name'
 

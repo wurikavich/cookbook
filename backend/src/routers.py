@@ -1,7 +1,8 @@
 from django.urls import include, path
 from rest_framework import routers
 
-from src.recipes.views import IngredientViewSet, RecipeViewSet
+from src.ingredients.views import IngredientViewSet
+from src.recipes.views import RecipeViewSet
 from src.tags.views import TagViewSet
 from src.users.views import UsersViewSet
 

@@ -54,7 +54,7 @@ paths:
     post:
       operationId: Регистрация пользователя
       description: ''
-      parameters: []
+      parameters: [ ]
       requestBody:
         content:
           application/json:
@@ -75,7 +75,7 @@ paths:
     get:
       operationId: Cписок тегов
       description: ''
-      parameters: []
+      parameters: [ ]
       responses:
         '200':
           content:
@@ -132,14 +132,14 @@ paths:
           description: Показывать только рецепты, находящиеся в списке избранного.
           schema:
             type: integer
-            enum: [0, 1]
+            enum: [ 0, 1 ]
         - name: is_in_shopping_cart
           required: false
           in: query
           description: Показывать только рецепты, находящиеся в списке покупок.
           schema:
             type: integer
-            enum: [0, 1]
+            enum: [ 0, 1 ]
         - name: author
           required: false
           in: query
@@ -189,10 +189,10 @@ paths:
         - Рецепты
     post:
       security:
-        - Token: []
+        - Token: [ ]
       operationId: Создание рецепта
       description: 'Доступно только авторизованному пользователю'
-      parameters: []
+      parameters: [ ]
       requestBody:
         content:
           application/json:
@@ -223,7 +223,7 @@ paths:
         - Token: [ ]
       operationId: Скачать список покупок
       description: 'Скачать файл со списком покупок. Это может быть TXT/PDF/CSV. Важно, чтобы контент файла удовлетворял требованиям задания. Доступно только авторизованным пользователям.'
-      parameters: []
+      parameters: [ ]
       responses:
         '200':
           description: ''
@@ -459,7 +459,7 @@ paths:
     get:
       operationId: Текущий пользователь
       description: ''
-      parameters: []
+      parameters: [ ]
       security:
         - Token: [ ]
       responses:
@@ -641,7 +641,7 @@ paths:
     post:
       operationId: Изменение пароля
       description: 'Изменение пароля текущего пользователя'
-      parameters: []
+      parameters: [ ]
       requestBody:
         content:
           application/json:
@@ -660,7 +660,7 @@ paths:
     post:
       operationId: Получить токен авторизации
       description: Используется для авторизации по емейлу и паролю, чтобы далее использовать токен при запросах.
-      parameters: []
+      parameters: [ ]
       requestBody:
         content:
           application/json:
@@ -679,17 +679,17 @@ paths:
     post:
       operationId: Удаление токена
       description: Удаляет токен текущего пользователя
-      parameters: []
+      parameters: [ ]
       requestBody:
         content:
           application/json:
-            schema: {}
+            schema: { }
 
       responses:
         '204':
           content:
             application/json:
-              schema: {}
+              schema: { }
           description: ''
         '401':
           $ref: '#/components/responses/AuthenticationError'
@@ -698,7 +698,7 @@ paths:
 components:
   schemas:
     User:
-      description:  'Пользователь (В рецепте - автор рецепта)'
+      description: 'Пользователь (В рецепте - автор рецепта)'
       type: object
       properties:
         email:
@@ -1075,7 +1075,7 @@ components:
         tags:
           description: 'Список id тегов'
           type: array
-          example: [1, 2]
+          example: [ 1, 2 ]
           items:
             type: integer
         image:
@@ -1118,7 +1118,7 @@ components:
       properties:
         ingredients:
           description: 'Ошибки в ингредиентах. В приведенном примере в первом и третьем ингредиенте не было ошибок (amount >= 1), а во втором были.'
-          example: [{},{"amount":["Убедитесь, что это значение больше либо равно 1."]}, {}]
+          example: [ { },{ "amount": [ "Убедитесь, что это значение больше либо равно 1." ] }, { } ]
           type: array
           items:
             type: object

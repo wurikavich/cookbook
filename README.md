@@ -118,7 +118,7 @@
 Приведенные выше инструкции по установке и запуску проекта имеют только 
 демонстрационную цель и могут быть использованы только на [localhost]((http://localhost/recipes/)). 
 
-Документация, запустите сервер и перейдите по ссылке: [http://localhost//api/docs/](http://localhost/api/docs/).
+Документация, запустите сервер и перейдите по ссылке: [http://localhost/api/docs/](http://localhost/api/docs/).
 
 Панель аднимистратора: [http://localhost/admin/](http://localhost/admin/). 
 

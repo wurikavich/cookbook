@@ -2,19 +2,12 @@ from django.core.exceptions import ValidationError
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
-from .models import Ingredient, IngredientRecipe, Recipe
-from ..base.utils import get_boolean_value
-from ..tags.models import Tag
-from ..tags.serializers import TagSerializer
-from ..users.serializers import UserSerializer
-
-
-class IngredientSerializer(serializers.ModelSerializer):
-    """Вывод информации о ингредиенте."""
-
-    class Meta:
-        model = Ingredient
-        fields = ('id', 'name', 'measurement_unit')
+from src.ingredients.models import Ingredient
+from src.recipes.models import IngredientRecipe, Recipe
+from src.recipes.utils import get_boolean_value
+from src.tags.models import Tag
+from src.tags.serializers import TagSerializer
+from src.users.serializers import UserSerializer
 
 
 class IngredientRecipeSerializer(serializers.ModelSerializer):
@@ -40,9 +33,9 @@ class IngredientRecipeSerializer(serializers.ModelSerializer):
 class RecipeReadSerializer(serializers.ModelSerializer):
     """Вывод информации о рецепте."""
 
+    author = UserSerializer(read_only=True)
     tags = TagSerializer(read_only=True, many=True)
     ingredients = serializers.SerializerMethodField()
-    author = UserSerializer(read_only=True)
     is_favorited = serializers.SerializerMethodField(read_only=True)
     is_in_shopping_cart = serializers.SerializerMethodField(read_only=True)
     image = Base64ImageField(max_length=None, use_url=True)
@@ -93,7 +86,8 @@ class IngredientCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         return IngredientRecipe.objects.create(
             ingredient=validated_data.get('id'),
-            amount=validated_data.get('amount'))
+            amount=validated_data.get('amount')
+        )
 
 
 class RecipeCreateSerializer(RecipeReadSerializer):
@@ -142,7 +136,7 @@ class RecipeCreateSerializer(RecipeReadSerializer):
             IngredientRecipe(
                 recipe=recipe,
                 amount=ingredient['amount'],
-                ingredient=ingredient['ingredient'],
+                ingredient=ingredient['ingredient']
             ) for ingredient in ingredients])
 
     def to_representation(self, instance):
