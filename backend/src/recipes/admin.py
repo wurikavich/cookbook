@@ -3,6 +3,8 @@ from django.contrib import admin
 from src.recipes.models import Favourite, IngredientRecipe, Purchases, Recipe
 
 
+@admin.register(Purchases)
+@admin.register(Favourite)
 class BaseAdminControl(admin.ModelAdmin):
     """Базовая админ панель для моделей: Favourite, Purchases."""
     list_display = ('id', 'user', 'recipe', 'add_date')
@@ -23,9 +25,10 @@ class RecipesAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'author', 'favorited_count')
     list_display_links = ('name',)
     list_filter = ('name', 'author', 'tags')
+    search_fields = ('author__username', 'name', 'tags__name')
+    readonly_fields = ('favorited_count',)
     exclude = ('ingredients',)
     inlines = [IngredientAmountInline]
-    search_fields = ('author__username', 'name', 'tags__name')
     save_on_top = True
 
     def favorited_count(self, obj):
@@ -40,15 +43,3 @@ class IngredientRecipeAdmin(admin.ModelAdmin):
     list_display = ('id', 'recipe', 'ingredient', 'amount')
     list_display_links = ('recipe',)
     search_fields = ('name',)
-
-
-@admin.register(Favourite)
-class FavouriteAdmin(BaseAdminControl):
-    """Рецепты добавленные в избранное."""
-    pass
-
-
-@admin.register(Purchases)
-class PurchasesAdmin(BaseAdminControl):
-    """Рецепты добавленные в список покупок."""
-    pass

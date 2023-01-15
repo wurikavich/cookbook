@@ -48,7 +48,7 @@ class UsersViewSet(viewsets.GenericViewSet):
                     context={'request': request})
                 return Response(serializer.data,
                                 status=status.HTTP_201_CREATED)
-            return Response({'error': 'Вы же уже подписаны на автора.'},
+            return Response({'error': 'Вы же уже подписаны на автора!'},
                             status=status.HTTP_400_BAD_REQUEST)
         subscription = get_object_or_404(Follow, user=user, author=author)
         subscription.delete()

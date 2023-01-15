@@ -31,4 +31,4 @@ class UserAdmin(UserAdmin):
 class FollowAdmin(admin.ModelAdmin):
     """Управление подписками."""
     list_display = ('id', 'user', 'author')
-    search_fields = ('user', 'author')
+    search_fields = ('user',)

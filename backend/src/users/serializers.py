@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from src.base.serializers import RecipeShortInfoSerializer
 from src.recipes.models import Recipe
 from src.users.models import Follow, User
 
@@ -27,14 +28,6 @@ class UserSerializer(serializers.ModelSerializer):
         if request.user.is_anonymous or (request.user == obj):
             return False
         return request.user.follower.filter(author=obj).exists()
-
-
-class RecipeShortSerializer(serializers.ModelSerializer):
-    """"Вывод необходимых полей рецепта для отображения в профиле юзера."""
-
-    class Meta:
-        model = Recipe
-        fields = ('id', 'name', 'image', 'cooking_time')
 
 
 class FollowSerializer(serializers.ModelSerializer):
@@ -82,7 +75,7 @@ class FollowSerializer(serializers.ModelSerializer):
                 queryset = queryset[:int(recipes_limit)]
             except ValueError:
                 raise ValueError(f'Некорректное значение - {recipes_limit}')
-        return RecipeShortSerializer(queryset, many=True).data
+        return RecipeShortInfoSerializer(queryset, many=True).data
 
     def get_recipes_count(self, obj):
         return Recipe.objects.filter(author=obj.author).count()

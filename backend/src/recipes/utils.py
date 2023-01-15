@@ -9,30 +9,18 @@ from reportlab.pdfgen import canvas
 from rest_framework import status
 from rest_framework.response import Response
 
+from src.base.serializers import RecipeShortInfoSerializer
 from src.recipes.models import Recipe
-from src.users.serializers import RecipeShortSerializer
-
-
-def get_boolean_value(self, obj, method):
-    """Возвращает логическое значение для полей сериализатора."""
-    request = self.context.get('request')
-    if not request or request.user.is_anonymous:
-        return False
-    current_user = {
-        'get_is_favorited': request.user.favorites,
-        'get_is_in_shopping_cart': request.user.purchases
-    }
-    return current_user[method].filter(recipe=obj).exists()
 
 
 def add_object(models, user, pk):
     """Создание объекта модели."""
+    recipe = get_object_or_404(Recipe, pk=pk)
     if models.objects.filter(user=user, recipe__id=pk).exists():
         return Response({'error': 'Запись уже добавлена!'},
                         status=status.HTTP_400_BAD_REQUEST)
-    recipe = get_object_or_404(Recipe, pk=pk)
     models.objects.create(user=user, recipe=recipe)
-    serializer = RecipeShortSerializer(recipe)
+    serializer = RecipeShortInfoSerializer(recipe)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
