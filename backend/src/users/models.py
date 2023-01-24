@@ -32,17 +32,13 @@ class User(AbstractUser):
         max_length=settings.MAX_LENGTH_USER_MODEL_FIELD,
         verbose_name="Имя",
         help_text="Введите своё имя",
-        validators=[
-            user_validate_name
-        ]
+        validators=(user_validate_name,)
     )
     last_name = models.CharField(
         max_length=settings.MAX_LENGTH_USER_MODEL_FIELD,
         verbose_name="Фамилия",
         help_text="Введите свою фамилию",
-        validators=[
-            user_validate_name
-        ]
+        validators=(user_validate_name,)
     )
 
     class Meta:
@@ -50,7 +46,9 @@ class User(AbstractUser):
         verbose_name_plural = 'Пользователи'
 
     def __str__(self):
-        return self.username
+        if self.get_full_name():
+            return self.get_full_name()[:30]
+        return self.username[:30]
 
 
 class Follow(models.Model):
@@ -66,10 +64,11 @@ class Follow(models.Model):
         User,
         on_delete=models.CASCADE,
         verbose_name="Автор",
-        related_name="+"
+        related_name="following"
     )
 
     class Meta:
+        ordering = ('id',)
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
         constraints = [
@@ -79,8 +78,7 @@ class Follow(models.Model):
             ),
             models.CheckConstraint(
                 name='disable subscribe to yourself',
-                check=~models.Q(user=models.F('author'))
-            )
+                check=~models.Q(user=models.F('author')))
         ]
 
     def __str__(self):

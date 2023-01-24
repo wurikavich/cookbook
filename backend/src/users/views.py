@@ -1,3 +1,4 @@
+from django.db.models import Count
 from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -6,7 +7,8 @@ from rest_framework.response import Response
 
 from src.base.pagination import CustomPagination
 from src.users.models import Follow, User
-from src.users.serializers import FollowSerializer, UserSerializer
+from src.users.serializers import (
+    FollowCreateSerializer, FollowReadSerializer, UserSerializer)
 
 
 class UsersViewSet(viewsets.GenericViewSet):
@@ -22,8 +24,10 @@ class UsersViewSet(viewsets.GenericViewSet):
             permission_classes=(IsAuthenticated,))
     def get_subscriptions(self, request):
         """Возвращает список подписок пользователя."""
-        serializer = FollowSerializer(
-            self.paginate_queryset(request.user.follower.all()),
+        queryset = self.paginate_queryset(request.user.follower.all().annotate(
+            recipes_count=Count('author__recipes')))
+        serializer = FollowReadSerializer(
+            queryset,
             many=True,
             context={'request': request})
         return self.get_paginated_response(serializer.data)
@@ -34,22 +38,16 @@ class UsersViewSet(viewsets.GenericViewSet):
             permission_classes=(IsAuthenticated,))
     def subscribe(self, request, pk):
         """Подписаться/отписаться от пользователя."""
-        author = get_object_or_404(User, id=pk)
-        user = request.user
         if request.method == 'POST':
-            if user == author:
-                return Response(
-                    {'error': 'Нельзя подписываться на самого себя!'},
-                    status=status.HTTP_400_BAD_REQUEST)
-            if not user.follower.filter(author=author).exists():
-                subscription = Follow.objects.create(user=user, author=author)
-                serializer = FollowSerializer(
-                    subscription,
-                    context={'request': request})
-                return Response(serializer.data,
-                                status=status.HTTP_201_CREATED)
-            return Response({'error': 'Вы же уже подписаны на автора!'},
-                            status=status.HTTP_400_BAD_REQUEST)
-        subscription = get_object_or_404(Follow, user=user, author=author)
-        subscription.delete()
+            data = {'user': request.user.id, 'author': pk}
+            context = {'request': request}
+            serializer = FollowCreateSerializer(data=data, context=context)
+            serializer.is_valid(raise_exception=True)
+            subscription = serializer.save()
+            serializer = FollowReadSerializer(subscription, context=context)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        author = get_object_or_404(User, id=pk)
+        obj = get_object_or_404(Follow, user=request.user, author=author)
+        obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

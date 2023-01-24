@@ -12,27 +12,21 @@ class Tag(models.Model):
         unique=True,
         verbose_name="Название",
         help_text="Введите тег",
-        validators=[
-            NameValidator()
-        ]
+        validators=(NameValidator(),)
     )
     color = models.CharField(
         max_length=settings.MAX_LENGTH_TAG_COLOR,
         unique=True,
         verbose_name="HEX-код цвета",
         help_text="Добавьте цвет в формате HEX-кода",
-        validators=[
-            ColorValidator()
-        ]
+        validators=(ColorValidator(),)
     )
     slug = models.SlugField(
         max_length=settings.MAX_LENGTH_TAG_MODEL_FIELD,
         unique=True,
         verbose_name="Slug",
         help_text="Добавьте slug",
-        validators=[
-            SlugValidator()
-        ]
+        validators=(SlugValidator(),)
     )
 
     class Meta:

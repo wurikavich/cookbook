@@ -1,20 +1,11 @@
 from django.contrib import admin
 
-from src.recipes.models import Favourite, IngredientRecipe, Purchases, Recipe
-
-
-@admin.register(Purchases)
-@admin.register(Favourite)
-class BaseAdminControl(admin.ModelAdmin):
-    """Базовая админ панель для моделей: Favourite, Purchases."""
-    list_display = ('id', 'user', 'recipe', 'add_date')
-    list_display_links = ('user',)
-    search_fields = ('user', 'recipe')
+from src.recipes.models import IngredientAmount, Recipe, UserRecipeRelation
 
 
 class IngredientAmountInline(admin.TabularInline):
     """Добавление ингредиентов в рецепт."""
-    model = IngredientRecipe
+    model = IngredientAmount
     min_num = 1
     extra = 0
 
@@ -32,14 +23,24 @@ class RecipesAdmin(admin.ModelAdmin):
     save_on_top = True
 
     def favorited_count(self, obj):
-        return Favourite.objects.filter(recipe=obj).count()
+        return UserRecipeRelation.objects.filter(
+            recipe=obj, favourites=True).count()
 
     favorited_count.short_description = 'В избранном'
 
 
-@admin.register(IngredientRecipe)
+@admin.register(IngredientAmount)
 class IngredientRecipeAdmin(admin.ModelAdmin):
     """Количество ингредиентов в рецепте."""
     list_display = ('id', 'recipe', 'ingredient', 'amount')
     list_display_links = ('recipe',)
-    search_fields = ('name',)
+    search_fields = ('ingredient__name', 'recipe__name')
+
+
+@admin.register(UserRecipeRelation)
+class UserRecipeRelationAdmin(admin.ModelAdmin):
+    """Рецепты сохраненные у пользователя."""
+    list_display = ('id', 'user', 'recipe', 'favourites', 'purchases')
+    list_display_links = ('user',)
+    list_filter = ('favourites', 'purchases')
+    search_fields = ('recipe__name', 'user__username')

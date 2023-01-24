@@ -1,7 +1,7 @@
-from rest_framework import permissions
+from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 
-class IsAdminOrReadOnly(permissions.BasePermission):
+class IsAdminOrReadOnly(BasePermission):
     """
     Доступы для моделей: Tag, Ingredient
     Разрешить:
@@ -11,18 +11,18 @@ class IsAdminOrReadOnly(permissions.BasePermission):
 
     def has_permission(self, request, view):
         return (
-            request.method in permissions.SAFE_METHODS
-            or (request.user.is_authenticated and request.user.is_staff)
+            request.method in SAFE_METHODS or
+            (request.user.is_authenticated and request.user.is_staff)
         )
 
     def has_object_permission(self, request, view, obj):
         return (
-            request.method in permissions.SAFE_METHODS
+            request.method in SAFE_METHODS
             or (request.user.is_authenticated and request.user.is_staff)
         )
 
 
-class IsAuthorOrAdminOrReadOnly(permissions.BasePermission):
+class IsAuthorOrAdminOrReadOnly(BasePermission):
     """
     Доступы для моделей: Recipe
     Разрешить:
@@ -32,14 +32,11 @@ class IsAuthorOrAdminOrReadOnly(permissions.BasePermission):
     """
 
     def has_permission(self, request, view):
-        return (
-            request.method in permissions.SAFE_METHODS
-            or request.user.is_authenticated
-        )
+        return request.method in SAFE_METHODS or request.user.is_authenticated
 
     def has_object_permission(self, request, view, obj):
         return (
-            request.method in permissions.SAFE_METHODS
-            or obj.author == request.user
-            or request.user.is_staff
+            request.method in SAFE_METHODS or
+            obj.author == request.user or
+            request.user.is_staff
         )

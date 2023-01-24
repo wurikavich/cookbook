@@ -15,9 +15,7 @@ class Recipe(models.Model):
         max_length=settings.MAX_LENGTH_RECIPE_FIELD,
         verbose_name="Название",
         help_text="Введите название рецепта",
-        validators=[
-            recipe_validate_name
-        ]
+        validators=(recipe_validate_name,)
     )
     text = models.TextField(
         verbose_name="Описание",
@@ -30,6 +28,12 @@ class Recipe(models.Model):
         verbose_name="Автор рецепта",
         help_text="Выберите автора рецепта"
     )
+    readers = models.ManyToManyField(
+        User,
+        through="UserRecipeRelation",
+        related_name="read_recipes",
+        verbose_name="Рецепты сохраненные у пользователей"
+    )
     image = models.ImageField(
         verbose_name="Изображение",
         help_text="Добавьте изображение",
@@ -38,14 +42,13 @@ class Recipe(models.Model):
     tags = models.ManyToManyField(
         Tag,
         symmetrical=False,
-        related_name='+',
-        verbose_name="Теги",
-        help_text="Выберите теги"
+        related_name="+",
+        verbose_name="Теги"
     )
     ingredients = models.ManyToManyField(
-        "IngredientRecipe",
-        symmetrical=False,
-        related_name='+',
+        Ingredient,
+        through="IngredientAmount",
+        related_name="recipes",
         verbose_name="Ингредиенты",
         help_text="Выберите ингредиенты"
     )
@@ -55,8 +58,7 @@ class Recipe(models.Model):
         validators=[
             MinValueValidator(
                 limit_value=1,
-                message="Время приготовления не может быть меньше 1 минуты!"
-            )
+                message="Время приготовления не может быть меньше 1 минуты!")
         ]
     )
     created = models.DateTimeField(
@@ -73,20 +75,20 @@ class Recipe(models.Model):
         return self.name
 
 
-class IngredientRecipe(models.Model):
-    """Вспомогательная модель для создания рецепта."""
+class IngredientAmount(models.Model):
+    """Вспомогательная модель. Сохраняет количество ингредиентов в рецепте."""
 
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='+',
+        related_name="amounts",
         verbose_name="Рецепт",
         help_text="Выберите рецепт"
     )
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.PROTECT,
-        related_name='+',
+        related_name="+",
         verbose_name="Ингредиент",
         help_text="Выберите ингредиент"
     )
@@ -96,8 +98,7 @@ class IngredientRecipe(models.Model):
         validators=[
             MinValueValidator(
                 limit_value=1,
-                message="Количество ингредиента не может быть меньше 1"
-            )
+                message="Количество ингредиента не может быть меньше 1")
         ]
     )
 
@@ -107,8 +108,7 @@ class IngredientRecipe(models.Model):
         constraints = [
             models.UniqueConstraint(
                 name='exclude the addition of an ingredient if present',
-                fields=['ingredient', 'recipe']
-            )
+                fields=['ingredient', 'recipe'])
         ]
 
     def __str__(self):
@@ -116,70 +116,40 @@ class IngredientRecipe(models.Model):
                 f' {self.amount} {self.ingredient.measurement_unit}.')
 
 
-class Favourite(models.Model):
-    """Модель избранных рецептов."""
+class UserRecipeRelation(models.Model):
+    """Рецепты добавленные пользователями в избранное и список покупок."""
 
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        verbose_name="Пользователь",
-        related_name="favorites"
-    )
-    recipe = models.ForeignKey(
-        Recipe,
-        on_delete=models.CASCADE,
-        verbose_name="Рецепт",
-        related_name='+'
-    )
-    add_date = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name="Дата добавления"
-    )
-
-    class Meta:
-        verbose_name = 'Избранное'
-        verbose_name_plural = 'Избранное'
-        constraints = [
-            models.UniqueConstraint(
-                name='exclude the addition to favorites, if present',
-                fields=['user', 'recipe']
-            )
-        ]
-
-    def __str__(self):
-        return f'"{self.user}" добавил в избранное рецепт "{self.recipe}".'
-
-
-class Purchases(models.Model):
-    """Модель списка покупок."""
-
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="purchases",
+        related_name="readers_user",
         verbose_name="Пользователь"
-
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='+',
+        related_name="readers_recipe",
         verbose_name="Рецепт"
     )
-    add_date = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name="Дата добавления"
+    favourites = models.BooleanField(
+        default=False,
+        verbose_name="В избранном",
+        help_text="Находится ли рецепт в избранном у пользователя"
+    )
+    purchases = models.BooleanField(
+        default=False,
+        verbose_name="В списке покупок",
+        help_text="Находится ли рецепт в списке покупок у пользователя"
     )
 
     class Meta:
-        verbose_name = 'Список покупок'
-        verbose_name_plural = 'Списки покупок'
+        verbose_name = 'Рецепты сохраненные у пользователя'
+        verbose_name_plural = 'Рецепты сохраненные у пользователей'
         constraints = [
             models.UniqueConstraint(
-                name='exclude the addition to shopping list,if present',
-                fields=['user', 'recipe']
-            )
+                name='exclude the addition, if present',
+                fields=['user', 'recipe'])
         ]
 
     def __str__(self):
-        return f'"{self.user}" добавил в список покупок рецепт "{self.recipe}"'
+        return f'"{self.user}" добавил рецепт "{self.recipe}".'

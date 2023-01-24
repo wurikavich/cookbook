@@ -1,3 +1,4 @@
+from django.db.models import Exists, OuterRef, Sum
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.decorators import action
@@ -6,19 +7,30 @@ from rest_framework.permissions import IsAuthenticated
 from src.base.filters import RecipeFilter
 from src.base.pagination import CustomPagination
 from src.base.permissions import IsAuthorOrAdminOrReadOnly
-from src.recipes.models import Favourite, IngredientRecipe, Purchases, Recipe
+from src.recipes.models import IngredientAmount, Recipe
 from src.recipes.serializers import (
     RecipeCreateSerializer, RecipeReadSerializer)
-from src.recipes.utils import add_object, create_pdf_file, delete_object
+from src.recipes.utils import create_or_delete, create_pdf_file
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
     """CRUD рецептов."""
-    queryset = Recipe.objects.all()
     pagination_class = CustomPagination
     permission_classes = (IsAuthorOrAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
+
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            return Recipe.objects.all().annotate(
+                is_favorited=Exists(self.request.user.readers_user.filter(
+                    recipe=OuterRef('id'), favourites=True)),
+                is_in_shopping_cart=Exists(
+                    self.request.user.readers_user.filter(
+                        recipe=OuterRef('id'), purchases=True))
+            ).select_related('author').prefetch_related('ingredients', 'tags')
+        return Recipe.objects.all().select_related('author').prefetch_related(
+            'ingredients', 'tags')
 
     def get_serializer_class(self):
         """Переопределение выбора сериализатора."""
@@ -32,9 +44,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
             permission_classes=(IsAuthenticated,))
     def set_favorite(self, request, pk):
         """Добавить/удалить рецепт в избранном."""
-        if request.method == 'POST':
-            return add_object(Favourite, request.user, pk)
-        return delete_object(Favourite, request.user, pk)
+
+        return create_or_delete(request, pk, source='favourites')
 
     @action(detail=True,
             methods=('post', 'delete'),
@@ -42,9 +53,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
             permission_classes=(IsAuthenticated,))
     def set_shopping_cart(self, request, pk):
         """Добавить/удалить рецепт в список покупок."""
-        if request.method == 'POST':
-            return add_object(Purchases, request.user, pk)
-        return delete_object(Purchases, request.user, pk)
+
+        return create_or_delete(request, pk, source='purchases')
 
     @action(detail=False,
             methods=('get',),
@@ -52,16 +62,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
             permission_classes=(IsAuthenticated,))
     def set_download_shopping_cart(self, request):
         """Собрать необходимые данные для формирования список покупок."""
-        recipes = Recipe.objects.filter(
-            id__in=request.user.purchases.values_list('recipe', flat=True))
-        shopping_list = {}
-        for recipe in recipes:
-            ingredients = IngredientRecipe.objects.filter(recipe=recipe)
-            for ing in ingredients:
-                if ing.ingredient.name in shopping_list:
-                    shopping_list[ing.ingredient.name][0] += ing.amount
-                else:
-                    shopping_list[ing.ingredient.name] = [
-                        ing.amount,
-                        ing.ingredient.measurement_unit]
+        shopping_list = IngredientAmount.objects.filter(
+            recipe__readers_recipe__user=request.user
+        ).values_list(
+            'ingredient__name', 'ingredient__measurement_unit'
+        ).order_by('ingredient__name').annotate(ingredient_total=Sum('amount'))
         return create_pdf_file(shopping_list)

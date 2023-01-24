@@ -1,23 +1,32 @@
-# CookBook - «Продуктовый помощник»
+# CookBook - ресурс для публикации рецептов.
+
+**Это** небольшое полноценное **Single Page Application**, написанное на **React.js** (Frontend)* 
+и **Python-Django** (Backend) с базой данных **PostgreSQL**, **Docker** 
+разворачивает приложение в трёх контейнерах: Nginx, PostgreSQL и Django+Gunicorn. 
+В рамках учебного курса был настроен **CI/CD** с помощью **GitHub Actions** 
+с автоматическим запуском на хостинге **Yandex.Cloud**.
+
 Дипломный проект разработанный в рамках учебного курса от Яндекс.Практикум.
 
-Цель работы - закрепить опыт, полученные в процессе обучения.
+Frontend был подготовлен [командой Яндекс.Практикум](https://github.com/yandex-praktikum/foodgram-project-react) (закрытый репозиторий, может быть недоступен),
+моей задачей являлось написание Backend-части, по техническому заданию,
+создание инфраструктуру и CI/CD приложения, деплой приложения на удаленный хостинг.
 
 [![Testing](https://github.com/wurikavich/cookbook/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/wurikavich/cookbook/actions/workflows/main.yml)
 
 ## Описание
-Проект **Cook Book** - Продуктовый помощник, онлайн-сервис и API для него.
-На этом сервисе пользователи публикуют свои рецепты, добавляют понравившиеся
-рецепты в избранное и подписываться на публикации любимых авторов, 
-а перед походом в магазин могут скачивать сводный список продуктов в формате pdf,
-необходимых для приготовления одного или нескольких выбранных блюд, добавленных в список покупок.
+Проект **Cook Book** - онлайн-сервис и API для него. На этом сервисе 
+пользователи публикуют свои рецепты, добавляют понравившиеся рецепты в избранное
+и подписываться на публикации любимых авторов, а перед походом в магазин могут 
+скачивать сводный список продуктов в формате pdf, необходимых для приготовления
+одного или нескольких выбранных блюд, добавленных в список покупок.
 
 ## Функционал:
 ### Пользователи:
 - Каждый пользователь имеет свою роль:
-   - Анонимный пользователь
-   - Аутентифицированный пользователь
-   - Администратор
+    - Анонимный пользователь
+    - Аутентифицированный пользователь
+    - Администратор
 - Получение данных своей учетной записи
 - Получение данных пользователя по id
 - Получение списка всех пользователей
@@ -55,31 +64,35 @@
 - Добавить рецепт в список покупок
 - Удалить рецепт из списка покупок
 
+[comment]: <> (<details>)
+
+[comment]: <> (<summary><h2>Как запустить проект:</h2></summary>)
+
 ## Настройка и запуск:
 Для развертывания проекта необходимо установить и запустить [Docker](https://www.docker.com/products/docker-desktop/).
 
 1. Клонируем репозиторий на локальную машину:
    ```bash
-   git git@github.com:wurikavich/cookbook.git
+   git clone git@github.com:wurikavich/cookbook.git
    ```
-   
+
 2. В директории infra создаём файл .env, со следующими переменными:
    - Создаём файл:
       ```bash
-      cd cookbook\infra  # Переместились в директорию infra
-      nano .env  # Создали и открыли файл .env
+      cd cookbook\infra             # Переместились в директорию infra
+      nano .env                     # Создали и открыли файл .env
       ```
    - Прописываем переменное окружения в нём. [Сгенерируйте секретный ключ.](https://djecrety.ir/):
       ```bash
       POSTGRES_ENGINE=django.db.backends.postgresql  # указываем, что работаем с postgresql
-      POSTGRES_DB=postgres  # имя базы данных (можете изменить)
-      POSTGRES_USER=postgres  # логин для подключения к базе данных (можете изменить)
-      POSTGRES_PASSWORD=postgres  # пароль для подключения к БД (можете изменить)
-      POSTGRES_HOST=db  # название сервиса-контейнера
-      POSTGRES_PORT=5432  # порт для подключения к БД
-      SECRET_KEY=  # секретный ключ Django (вставьте сгенерированный ключ)
+      POSTGRES_DB=postgres          # имя базы данных (можете изменить)
+      POSTGRES_USER=postgres        # логин для подключения к базе данных (можете изменить)
+      POSTGRES_PASSWORD=postgres    # пароль для подключения к БД (можете изменить)
+      POSTGRES_HOST=db              # название сервиса-контейнера
+      POSTGRES_PORT=5432            # порт для подключения к БД
+      SECRET_KEY=                   # секретный ключ Django (вставьте сгенерированный ключ)
       DEBUG=False
-      ALLOWED_HOSTS=  # при развертывании локально необходимо указать - localhost 127.0.0.1 *
+      ALLOWED_HOSTS=                # при развертывании локально необходимо указать - localhost 127.0.0.1 *
       ```
    - Сохраняем изменения в файле.
 
@@ -90,10 +103,10 @@
       ```
    - Ждем выполнение команды, при успешном выполнении, в терминале должны быть следующии строчки:
       ```bash
-      Creating infra_db_1 ... done
-      Creating infra_backend_1 ... done
-      Creating infra_frontend_1 ... done
-      Creating infra_nginx_1   ... done
+      Creating infra_database_1     ... done
+      Creating infra_backend_1      ... done
+      Creating infra_frontend_1     ... done
+      Creating infra_nginx_1        ... done
       ```
 
 4. Запуск django проекта. Из директории infra, выполняем команды:
@@ -116,17 +129,22 @@
       ```
 
 Приведенные выше инструкции по установке и запуску проекта имеют только 
-демонстрационную цель и могут быть использованы только на [localhost]((http://localhost/recipes/)). 
+демонстрационную цель и могут быть использованы только на [localhost](http://localhost/recipes/).
 
 Документация, запустите сервер и перейдите по ссылке: [http://localhost/api/docs/](http://localhost/api/docs/).
 
-Панель аднимистратора: [http://localhost/admin/](http://localhost/admin/). 
+Панель администратора: [http://localhost/admin/](http://localhost/admin/).
+
+[comment]: <> (</details>)
+
 
 ## Примеры запросов на эндпоинты
 ### Регистрация нового пользователя:
 #### Запрос
 ```bash
 POST - 'http://localhost/api/users/'
+```
+```yaml
 {
     "username": "user_username.",
     "email": "user@mail.ru",
@@ -137,7 +155,7 @@ POST - 'http://localhost/api/users/'
 ```
 
 #### Ответ
-```bash
+```yaml
 {
     "id": 2,
     "username": "user_username.",
@@ -151,6 +169,8 @@ POST - 'http://localhost/api/users/'
 #### Запрос
 ```bash
 POST - 'http://localhost/api/auth/token/login/'
+```
+```yaml
 {
     "password": "user_password.",
     "email": "user@mail.ru"
@@ -158,10 +178,8 @@ POST - 'http://localhost/api/auth/token/login/'
 ```
 
 #### Ответ
-```bash
-{
-    "auth_token": "token_value"
-}
+```yaml
+{ "auth_token" : "token_value"}
 ```
 
 ### Получение данных своей учетной записи:
@@ -172,7 +190,7 @@ header 'Authorization: Token "token_value"'
 ```
 
 #### Ответ
-```bash
+```yaml
 {
     "id": 2,
     "username": "user_username.",
@@ -194,12 +212,9 @@ header 'Authorization: Token "token_value"'
 - Nginx
 - Gunicorn
 - PostgreSQL
+- GitHub Actions
+- Yandex.Cloud
 
-### Запуск на сервере  
-
-Реализовано развертывание на Виртуальной Машине, сервера [Яндекс.Облако](https://cloud.yandex.ru/)  
-
-с помощью GitHub Actions в трёх контейнерах: nginx, PostgreSQL и Django+Gunicorn.
-
-## Разработчик
-[Александр Гетманов](https://github.com/wurikavich)
+## Разработчики
+- [Александр Гетманов](https://github.com/wurikavich) - Backend
+- [Яндекс.Практикум](https://github.com/yandex-praktikum/foodgram-project-react) - Frontend

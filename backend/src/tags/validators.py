@@ -1,9 +1,9 @@
-from django.core import validators
+from django.core.validators import RegexValidator
 from django.utils.deconstruct import deconstructible
 
 
 @deconstructible
-class NameValidator(validators.RegexValidator):
+class NameValidator(RegexValidator):
     """Проверка Названия тега на валидность."""
     regex = r"^[а-яА-ЯёЁa-zA-Z0-9]+$"
     message = "Недопустимый формат Названия тега!"
@@ -11,7 +11,7 @@ class NameValidator(validators.RegexValidator):
 
 
 @deconstructible
-class ColorValidator(validators.RegexValidator):
+class ColorValidator(RegexValidator):
     """Проверка HEX-кода цвета на валидность."""
     regex = r"^#([A-Fa-f0-9]{3,6})$"
     message = "Недопустимый формат HEX-кода цвета!"
@@ -19,7 +19,7 @@ class ColorValidator(validators.RegexValidator):
 
 
 @deconstructible
-class SlugValidator(validators.RegexValidator):
+class SlugValidator(RegexValidator):
     """Проверка Slug на валидность."""
     regex = r"^[-a-zA-Z0-9_]+$"
     message = "Недопустимый формат Slug-a!"

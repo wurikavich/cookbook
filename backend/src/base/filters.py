@@ -1,7 +1,6 @@
 from django_filters import rest_framework as filters
 from rest_framework.filters import SearchFilter
 
-from src.base.utils import get_queryset
 from src.recipes.models import Recipe
 from src.tags.models import Tag
 from src.users.models import User
@@ -30,7 +29,15 @@ class RecipeFilter(filters.FilterSet):
         fields = ('tags', 'author', 'is_favorited', 'is_in_shopping_cart')
 
     def get_is_favorited(self, queryset, name, value):
-        return get_queryset(queryset, value, self.request.user.favorites)
+        if value:
+            return queryset.filter(
+                id__in=self.request.user.readers_user.filter(
+                    favourites=True).values_list('recipe', flat=True))
+        return queryset
 
     def get_is_shopping_cart(self, queryset, name, value):
-        return get_queryset(queryset, value, self.request.user.purchases)
+        if value:
+            return queryset.filter(
+                id__in=self.request.user.readers_user.filter(
+                    purchases=True).values_list('recipe', flat=True))
+        return queryset

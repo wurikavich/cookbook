@@ -12,9 +12,7 @@ class Ingredient(models.Model):
         unique=True,
         verbose_name="Наименование ингредиента",
         help_text="Добавьте ингредиент",
-        validators=[
-            recipe_validate_name
-        ]
+        validators=(recipe_validate_name,)
     )
     measurement_unit = models.CharField(
         max_length=settings.MAX_LENGTH_RECIPE_FIELD,

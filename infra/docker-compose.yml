@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  db:
+  database:
     image: postgres:14.6-alpine
     volumes:
       - postgres_db:/var/lib/postgresql/data/
@@ -16,7 +16,7 @@ services:
       - static_value:/app/static/
       - media_value:/app/media/
     depends_on:
-      - db
+      - database
     env_file:
       - ./.env
 

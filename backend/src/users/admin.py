@@ -14,14 +14,14 @@ class UserAdmin(UserAdmin):
     list_display = ('id', 'username', 'first_name', 'last_name',
                     'email', 'recipes_count', 'follower_count')
     list_display_links = ('username',)
-    search_fields = ('username', 'email')
+    search_fields = ('username', 'mail', 'first_name', 'last_name')
     save_on_top = True
 
     def recipes_count(self, obj):
         return obj.recipes.count()
 
     def follower_count(self, obj):
-        return Follow.objects.filter(author=obj).count()
+        return obj.following.count()
 
     recipes_count.short_description = 'Рецептов'
     follower_count.short_description = 'Подписчиков'
@@ -31,4 +31,5 @@ class UserAdmin(UserAdmin):
 class FollowAdmin(admin.ModelAdmin):
     """Управление подписками."""
     list_display = ('id', 'user', 'author')
-    search_fields = ('user',)
+    list_display_links = ('user',)
+    search_fields = ('user__username',)
