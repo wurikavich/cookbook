@@ -23,8 +23,7 @@ class RecipesAdmin(admin.ModelAdmin):
     save_on_top = True
 
     def favorited_count(self, obj):
-        return UserRecipeRelation.objects.filter(
-            recipe=obj, favourites=True).count()
+        return obj.readers_recipe.filter(favourites=True).count()
 
     favorited_count.short_description = 'В избранном'
 

@@ -25,7 +25,7 @@ class UsersViewSet(viewsets.GenericViewSet):
     def get_subscriptions(self, request):
         """Возвращает список подписок пользователя."""
         queryset = self.paginate_queryset(request.user.follower.all().annotate(
-            recipes_count=Count('author__recipes')))
+            recipes_count=Count('author__recipes')).order_by('id'))
         serializer = FollowReadSerializer(
             queryset,
             many=True,

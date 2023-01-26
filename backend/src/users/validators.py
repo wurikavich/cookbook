@@ -12,4 +12,4 @@ def user_validate_name(value):
 def validate_prohibited_name(value):
     """Проверка запрещенных имен."""
     if value.lower() == "me":
-        raise ValidationError('Запрещено использовать "me"')
+        raise ValidationError(f'Запрещено использовать {value}!')

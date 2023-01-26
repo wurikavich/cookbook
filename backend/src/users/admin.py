@@ -11,20 +11,16 @@ class UserAdmin(UserAdmin):
     add_fieldsets = (
         (None, {'fields': ('email', 'username', 'password1', 'password2')}),
         (_('Personal info'), {'fields': ('first_name', 'last_name')}))
-    list_display = ('id', 'username', 'first_name', 'last_name',
-                    'email', 'recipes_count', 'follower_count')
+    list_display = ('id', 'username', 'first_name',
+                    'last_name', 'email', 'recipes_count')
     list_display_links = ('username',)
-    search_fields = ('username', 'mail', 'first_name', 'last_name')
+    search_fields = ('username', 'email', 'first_name', 'last_name')
     save_on_top = True
 
     def recipes_count(self, obj):
         return obj.recipes.count()
 
-    def follower_count(self, obj):
-        return obj.following.count()
-
     recipes_count.short_description = 'Рецептов'
-    follower_count.short_description = 'Подписчиков'
 
 
 @admin.register(Follow)

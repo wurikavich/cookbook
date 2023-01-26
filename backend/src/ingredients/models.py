@@ -10,6 +10,7 @@ class Ingredient(models.Model):
     name = models.CharField(
         max_length=settings.MAX_LENGTH_RECIPE_FIELD,
         unique=True,
+        db_index=True,
         verbose_name="Наименование ингредиента",
         help_text="Добавьте ингредиент",
         validators=(recipe_validate_name,)

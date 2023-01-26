@@ -10,7 +10,7 @@
 
 Frontend был подготовлен [командой Яндекс.Практикум](https://github.com/yandex-praktikum/foodgram-project-react) (закрытый репозиторий, может быть недоступен),
 моей задачей являлось написание Backend-части, по техническому заданию,
-создание инфраструктуру и CI/CD приложения, деплой приложения на удаленный хостинг.
+создание инфраструктур и CI/CD приложения, деплой приложения на удаленный хостинг.
 
 [![Testing](https://github.com/wurikavich/cookbook/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/wurikavich/cookbook/actions/workflows/main.yml)
 
@@ -64,10 +64,6 @@ Frontend был подготовлен [командой Яндекс.Практ
 - Добавить рецепт в список покупок
 - Удалить рецепт из списка покупок
 
-[comment]: <> (<details>)
-
-[comment]: <> (<summary><h2>Как запустить проект:</h2></summary>)
-
 ## Настройка и запуск:
 Для развертывания проекта необходимо установить и запустить [Docker](https://www.docker.com/products/docker-desktop/).
 
@@ -96,10 +92,12 @@ Frontend был подготовлен [командой Яндекс.Практ
       ```
    - Сохраняем изменения в файле.
 
-3. Запуск контейнеров Docker:
+3. Запуск контейнеров Docker. **Внимание** в инструкции показан пример команд 
+   для Windows, при запуске **на Linux системе**, каждую команду необходимо начинать с **sudo**.
    - Из директории infra необходимо выполнить команду:
       ```bash
-      docker-compose up -d --build
+      docker-compose up -d --build        # Docker начинает разворачивать контейнеры  
+      sudo docker-compose up -d --build   # пример команды для Linux систем
       ```
    - Ждем выполнение команды, при успешном выполнении, в терминале должны быть следующии строчки:
       ```bash
@@ -135,9 +133,6 @@ Frontend был подготовлен [командой Яндекс.Практ
 
 Панель администратора: [http://localhost/admin/](http://localhost/admin/).
 
-[comment]: <> (</details>)
-
-
 ## Примеры запросов на эндпоинты
 ### Регистрация нового пользователя:
 #### Запрос
@@ -150,7 +145,7 @@ POST - 'http://localhost/api/users/'
     "email": "user@mail.ru",
     "password": "user_password.",
     "first_name": "user_first_name",
-    "last_name":"user_last_name"
+    "last_name": "user_last_name"
 }
 ```
 
@@ -218,3 +213,19 @@ header 'Authorization: Token "token_value"'
 ## Разработчики
 - [Александр Гетманов](https://github.com/wurikavich) - Backend
 - [Яндекс.Практикум](https://github.com/yandex-praktikum/foodgram-project-react) - Frontend
+
+<details>
+<summary><h2>Изображение запущенного приложения</h2></summary>
+
+![Screenshot](Screenshot/Главный.png)
+![Screenshot3](Screenshot/Теги1.png)
+![Screenshot3](Screenshot/Теги2.png)
+![Screenshot2](Screenshot/Профиль.png)
+![Screenshot3](Screenshot/Рецепт.png)
+![Screenshot2](Screenshot/Подписки.png)
+![Screenshot2](Screenshot/Создать.png)
+![Screenshot](Screenshot/Избранное.png)
+![Screenshot3](Screenshot/Корзина.png)
+![Screenshot3](Screenshot/Покупки.png)
+
+</details>

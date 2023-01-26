@@ -15,6 +15,7 @@ class User(AbstractUser):
     username = models.CharField(
         max_length=settings.MAX_LENGTH_USER_MODEL_FIELD,
         unique=True,
+        db_index=True,
         verbose_name="Логин",
         help_text="Придумайте уникальный логин",
         validators=[
@@ -25,6 +26,7 @@ class User(AbstractUser):
     email = models.EmailField(
         max_length=settings.MAX_LENGTH_USER_EMAIL,
         unique=True,
+        db_index=True,
         verbose_name="Адрес электронной почты",
         help_text="Введите адрес электронной почты, необходим для авторизации"
     )

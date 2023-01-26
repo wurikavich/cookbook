@@ -8,9 +8,7 @@ from src.users.models import Follow, User
 class UserSerializer(serializers.ModelSerializer):
     """Вывод информации о пользователях."""
 
-    is_subscribed = serializers.SerializerMethodField(
-        read_only=True,
-        source='get_is_subscribed')
+    is_subscribed = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = User
@@ -25,9 +23,11 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request')
-        if request.user.is_anonymous or (request.user == obj):
-            return False
-        return request.user.follower.filter(author=obj).exists()
+        return (
+            request.user.is_authenticated and
+            request.user != obj and
+            request.user.follower.filter(author=obj).exists()
+        )
 
 
 class FollowCreateSerializer(serializers.ModelSerializer):
@@ -77,9 +77,11 @@ class FollowReadSerializer(serializers.ModelSerializer):
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request')
-        if request.user.is_anonymous or (request.user == obj.author):
-            return False
-        return request.user.follower.filter(author=obj.author).exists()
+        return (
+            request.user.is_authenticated and
+            request.user != obj.author and
+            request.user.follower.filter(author=obj.author).exists()
+        )
 
     def get_recipes(self, obj):
         request = self.context.get('request')

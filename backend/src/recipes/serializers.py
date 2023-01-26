@@ -85,14 +85,25 @@ class RecipeCreateSerializer(RecipeReadSerializer):
 
     def validate(self, data):
         ingredients = self.initial_data.get('ingredients')
+        tags = self.initial_data.get('tags')
+
+        if len(tags) < 1:
+            raise ValidationError('В рецепте не указаны Теги!')
+        tags_list = []
+        for tag in tags:
+            if tag in tags_list:
+                raise ValidationError('Теги повторяются!')
+            tags_list.append(tag)
+
+        if len(ingredients) < 1:
+            raise ValidationError('В рецепте не указаны ингредиенты!')
         ingredients_list = []
         for ingredient in ingredients:
             ingredient_id = ingredient['id']
             if ingredient_id in ingredients_list:
-                raise ValidationError('Ингредиенты повторяется!')
+                raise ValidationError('Ингредиенты повторяются!')
             ingredients_list.append(ingredient_id)
-        if data['cooking_time'] < 1:
-            raise ValidationError('Значение должно быть больше нуля!')
+
         return data
 
     @staticmethod
@@ -123,10 +134,10 @@ class UserRecipeRelationSerializer(serializers.ModelSerializer):
         user = data.get('user')
         favourites = data.get('favourites')
         purchases = data.get('purchases')
-        if favourites and user.readers_user.filter(recipe=recipe,
-                                                   favourites=True).exists():
+        if favourites and user.readers_user.filter(
+                                    recipe=recipe, favourites=True).exists():
             raise ValidationError('Рецепт уже добавлен!')
-        if purchases and user.readers_user.filter(recipe=recipe,
-                                                  purchases=True).exists():
+        if purchases and user.readers_user.filter(
+                                    recipe=recipe, purchases=True).exists():
             raise ValidationError('Рецепт уже добавлен!')
         return data

@@ -13,6 +13,7 @@ class Recipe(models.Model):
 
     name = models.CharField(
         max_length=settings.MAX_LENGTH_RECIPE_FIELD,
+        db_index=True,
         verbose_name="Название",
         help_text="Введите название рецепта",
         validators=(recipe_validate_name,)
@@ -37,7 +38,7 @@ class Recipe(models.Model):
     image = models.ImageField(
         verbose_name="Изображение",
         help_text="Добавьте изображение",
-        upload_to="recipes_images/%Y/%m/%d/"
+        upload_to="recipes/images/%Y/%m/%d/"
     )
     tags = models.ManyToManyField(
         Tag,

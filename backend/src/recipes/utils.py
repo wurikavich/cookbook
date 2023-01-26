@@ -1,6 +1,7 @@
+import io
 from datetime import datetime
 
-from django.http import HttpResponse
+from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
@@ -8,6 +9,7 @@ from reportlab.pdfgen import canvas
 from rest_framework import status
 from rest_framework.response import Response
 
+from config import settings
 from src.base.serializers import RecipeShortInfoSerializer
 from src.recipes.models import Recipe, UserRecipeRelation
 from src.recipes.serializers import UserRecipeRelationSerializer
@@ -46,21 +48,25 @@ def create_or_delete(request, pk, source):
 
 def create_pdf_file(shopping_list):
     """Сформировать из входящих данных pdf-файл с необходимы ингредиентами."""
-    pdfmetrics.registerFont(TTFont('Times', 'times.ttf', 'UTF-8'))
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = ('attachment; '
-                                       'filename="Список_покупок.pdf"')
-    page = canvas.Canvas(response)
-    page.setFont('Times', size=20)
-    page.drawString(
-        120, 800,
-        f'Список покупок на {datetime.today().strftime("%d.%m.%Y")}.')
-    page.setFont('Times', size=15)
+    times_location = settings.STATIC_ROOT + '/fonts/times.ttf'
+    times_name = 'Times'
+    current_date = datetime.today().strftime("%d.%m.%Y")
+
+    pdfmetrics.registerFont(TTFont(times_name, times_location, 'UTF-8'))
+
+    buffer = io.BytesIO()
+    page = canvas.Canvas(buffer)
+
+    page.setFont(times_name, size=18)
+    page.drawString(120, 800, f'Список покупок на {current_date}:')
+    page.setFont(times_name, size=16)
     height = 750
-    for number, ingredient in enumerate(shopping_list, 1):
-        page.drawString(40, height, (
-            f'{number}. {ingredient[0]} - {ingredient[2]}, {ingredient[1]}'))
+    for number, ing in enumerate(shopping_list, 1):
+        string = f'{number}. {ing[0]} - {ing[2]}, {ing[1]}'
+        page.drawString(40, height, string)
         height -= 25
     page.showPage()
     page.save()
-    return response
+    buffer.seek(0)
+    return FileResponse(
+        buffer, as_attachment=True, filename='Список_покупок.pdf')

@@ -63,8 +63,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def set_download_shopping_cart(self, request):
         """Собрать необходимые данные для формирования список покупок."""
         shopping_list = IngredientAmount.objects.filter(
-            recipe__readers_recipe__user=request.user
+            recipe__id__in=request.user.readers_user.filter(
+                purchases=True).values_list('recipe', flat=True)
         ).values_list(
             'ingredient__name', 'ingredient__measurement_unit'
-        ).order_by('ingredient__name').annotate(ingredient_total=Sum('amount'))
+        ).order_by('ingredient__name').annotate(total=Sum('amount'))
         return create_pdf_file(shopping_list)
