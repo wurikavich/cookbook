@@ -21,7 +21,9 @@ Frontend был подготовлен [командой Яндекс.Практ
 скачивать сводный список продуктов в формате pdf, необходимых для приготовления
 одного или нескольких выбранных блюд, добавленных в список покупок.
 
-## Функционал:
+<details>
+<summary><h2>Функционал</h2></summary>
+
 ### Пользователи:
 - Каждый пользователь имеет свою роль:
     - Анонимный пользователь
@@ -63,6 +65,8 @@ Frontend был подготовлен [командой Яндекс.Практ
 - Скачать pdf-файл со списком необходимых ингредиентов
 - Добавить рецепт в список покупок
 - Удалить рецепт из списка покупок
+
+</details>
 
 ## Настройка и запуск:
 Для развертывания проекта необходимо установить и запустить [Docker](https://www.docker.com/products/docker-desktop/).
@@ -193,6 +197,94 @@ header 'Authorization: Token "token_value"'
     "first_name": "user_first_name",
     "last_name": "user_last_name",
     "is_subscribed": false
+}
+```
+
+### Добавление нового рецепта:
+#### Запрос
+```bash
+POST - 'http://localhost/api/recipes/'
+header 'Authorization: Token "token_value"'
+```
+```yaml
+{
+  "ingredients": [
+    {
+      "id": 11,
+      "amount": 270
+    },
+    {
+      "id": 38,
+      "amount": 2
+    },
+    {
+      "id": 267,
+      "amount": 30
+    },              
+  ],
+  "tags": [
+    1,
+    2
+  ],
+  "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+  "name": "Кофе с молоком",
+  "text": "Вкусные и полезные напитки можно приготовить в домашних условиях."
+  "cooking_time": 15
+}
+```
+
+#### Ответ
+```yaml
+{
+  "id": 4,
+  "tags": [
+    {
+      "id": 1,
+      "name": "Завтрак",
+      "color": "#E26C2D",
+      "slug": "breakfast"
+    },
+    {
+      "id": 2,
+      "name": "КофейноеУтро",
+      "color": "#0000CD",
+      "slug": "KofeinoeUtro"
+    }
+  ],
+  "author": {
+    "id": 2,
+    "username": "user_username.",
+    "email": "user@mail.ru",
+    "first_name": "user_first_name",
+    "last_name": "user_last_name",
+    "is_subscribed": false
+  },
+  "ingredients": [
+    {
+      "id": 11,
+      "name": "Вода кипяченная",
+      "measurement_unit": "мл",
+      "amount": 270
+    },
+    {
+      "id": 38,
+      "name": "Кофе молотый",
+      "measurement_unit": "ч. ложка",
+      "amount": 2
+    },
+    {
+      "id": 267,
+      "name": "Молоко 2,5%",
+      "measurement_unit": "мл",
+      "amount": 30
+    }
+  ],
+  "is_favorited": false,
+  "is_in_shopping_cart": false,
+  "name": "Кофе с молоком",
+  "image": "http://localhoct/media/recipes/images/20223/01/26/koffe.jpeg",
+  "text": "Вкусные и полезные напитки можно приготовить в домашних условиях."
+  "cooking_time": 15
 }
 ```
 
