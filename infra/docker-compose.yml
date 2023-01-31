@@ -10,7 +10,6 @@ services:
 
   backend:
     build: ../backend/
-#    image: wurikavich/backend_foodgram:latest
     restart: always
     volumes:
       - static_value:/app/static/
@@ -24,7 +23,6 @@ services:
     build:
       context: ../frontend
       dockerfile: Dockerfile
-#    image: wurikavich/frontend_foodgram:latest
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:

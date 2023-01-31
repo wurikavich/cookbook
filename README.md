@@ -1,25 +1,28 @@
 # CookBook - ресурс для публикации рецептов.
 
-**Это** небольшое полноценное **Single Page Application**, написанное на **React.js** (Frontend)* 
-и **Python-Django** (Backend) с базой данных **PostgreSQL**, **Docker** 
-разворачивает приложение в трёх контейнерах: Nginx, PostgreSQL и Django+Gunicorn. 
-В рамках учебного курса был настроен **CI/CD** с помощью **GitHub Actions** 
-с автоматическим запуском на хостинге **Yandex.Cloud**.
-
 Дипломный проект разработанный в рамках учебного курса от Яндекс.Практикум.
 
-Frontend был подготовлен [командой Яндекс.Практикум](https://github.com/yandex-praktikum/foodgram-project-react) (закрытый репозиторий, может быть недоступен),
-моей задачей являлось написание Backend-части, по техническому заданию,
-создание инфраструктур и CI/CD приложения, деплой приложения на удаленный хостинг.
+**Это** небольшое полноценное **Single Page Application**, написанное на
+**React.js** (Frontend) и **Python-Django** (Backend) с базой данных
+**PostgreSQL**, **Docker** разворачивает приложение в трёх контейнерах:
+Nginx, PostgreSQL и Django+Gunicorn. В рамках учебного курса был настроен
+**CI/CD** с помощью **GitHub Actions** с автоматическим запуском на хостинге
+**Yandex.Cloud**.
+
+Frontend был подготовлен [командой Яндекс.Практикум](https://github.com/yandex-praktikum/foodgram-project-react)
+(закрытый репозиторий, может быть недоступен), моей задачей являлось написание
+Backend-части, по техническому заданию, создание инфраструктур и CI/CD
+приложения, деплой приложения на удаленный хостинг.
 
 [![Testing](https://github.com/wurikavich/cookbook/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/wurikavich/cookbook/actions/workflows/main.yml)
 
 ## Описание
-Проект **Cook Book** - онлайн-сервис и API для него. На этом сервисе 
-пользователи публикуют свои рецепты, добавляют понравившиеся рецепты в избранное
-и подписываться на публикации любимых авторов, а перед походом в магазин могут 
-скачивать сводный список продуктов в формате pdf, необходимых для приготовления
-одного или нескольких выбранных блюд, добавленных в список покупок.
+Проект **Cook Book** - онлайн-сервис и API для него. На этом сервисе
+пользователи публикуют свои рецепты, добавляют понравившиеся рецепты в
+избранное и подписываться на публикации любимых авторов, а перед походом в
+магазин могут скачивать сводный список продуктов в формате pdf, необходимых для
+приготовления одного или нескольких выбранных блюд, добавленных в список
+покупок.
 
 <details>
 <summary><h2>Функционал</h2></summary>
@@ -77,61 +80,62 @@ Frontend был подготовлен [командой Яндекс.Практ
    ```
 
 2. В директории infra создаём файл .env, со следующими переменными:
-   - Создаём файл:
-      ```bash
-      cd cookbook\infra             # Переместились в директорию infra
-      nano .env                     # Создали и открыли файл .env
-      ```
-   - Прописываем переменное окружения в нём. [Сгенерируйте секретный ключ.](https://djecrety.ir/):
-      ```bash
-      POSTGRES_ENGINE=django.db.backends.postgresql  # указываем, что работаем с postgresql
-      POSTGRES_DB=postgres          # имя базы данных (можете изменить)
-      POSTGRES_USER=postgres        # логин для подключения к базе данных (можете изменить)
-      POSTGRES_PASSWORD=postgres    # пароль для подключения к БД (можете изменить)
-      POSTGRES_HOST=db              # название сервиса-контейнера
-      POSTGRES_PORT=5432            # порт для подключения к БД
-      SECRET_KEY=                   # секретный ключ Django (вставьте сгенерированный ключ)
-      DEBUG=False
-      ALLOWED_HOSTS=                # при развертывании локально необходимо указать - localhost 127.0.0.1 *
-      ```
-   - Сохраняем изменения в файле.
+    - Создаём файл:
+       ```bash
+       cd cookbook\infra                      # Переместились в директорию infra
+       nano .env                              # Создали и открыли файл .env
+       ```
+    - Прописываем переменное окружения в нём. [Сгенерируйте секретный ключ.](https://djecrety.ir/):
+       ```bash
+       POSTGRES_ENGINE=django.db.backends.postgresql  # указываем, что работаем с postgresql
+       POSTGRES_DB=postgres                   # имя базы данных (можете изменить)
+       POSTGRES_USER=postgres                 # логин для подключения к базе данных (можете изменить)
+       POSTGRES_PASSWORD=postgres             # пароль для подключения к БД (можете изменить)
+       POSTGRES_HOST=database                 # название сервиса-контейнера
+       POSTGRES_PORT=5432                     # порт для подключения к БД
+       SECRET_KEY=                            # секретный ключ Django (вставьте сгенерированный ключ)
+       DEBUG=False
+       ALLOWED_HOSTS=localhost 127.0.0.1 *    # необходимо при развертывании локально
+       ```
+    - Сохраняем изменения в файле.
 
-3. Запуск контейнеров Docker. **Внимание** в инструкции показан пример команд 
-   для Windows, при запуске **на Linux системе**, каждую команду необходимо начинать с **sudo**.
-   - Из директории infra необходимо выполнить команду:
-      ```bash
-      docker-compose up -d --build        # Docker начинает разворачивать контейнеры  
-      sudo docker-compose up -d --build   # пример команды для Linux систем
-      ```
-   - Ждем выполнение команды, при успешном выполнении, в терминале должны быть следующии строчки:
-      ```bash
-      Creating infra_database_1     ... done
-      Creating infra_backend_1      ... done
-      Creating infra_frontend_1     ... done
-      Creating infra_nginx_1        ... done
-      ```
+3. Запуск контейнеров Docker. **Внимание** в инструкции показан пример команд
+   для Windows, при запуске **на Linux системе**, каждую команду необходимо
+   начинать с **sudo**.
+    - Из директории infra необходимо выполнить команду:
+       ```bash
+       docker-compose up -d --build           # Docker начинает разворачивать контейнеры  
+       sudo docker-compose up -d --build      # пример команды для Linux систем
+       ```
+    - Ждем выполнение команды, при успешном выполнении, в терминале должны быть следующии строчки:
+       ```bash
+       Creating infra_database_1     ... done
+       Creating infra_backend_1      ... done
+       Creating infra_frontend_1     ... done
+       Creating infra_nginx_1        ... done
+       ```
 
 4. Запуск django проекта. Из директории infra, выполняем команды:
-   - Создаём и применяем миграции:
-      ```bash
-      docker-compose exec backend python manage.py makemigrations
-      docker-compose exec backend python manage.py migrate
-      ```
-   - Подключаем статику:
-      ```bash
-      docker-compose exec backend python manage.py collectstatic --no-input
-      ```
-   - Загружаем подготовленные данный в базу данных проекта:
-      ```bash
-      docker-compose exec backend python manage.py loaddata data/fixtures.json
-      ```     
-   - Создаём супер пользователя django:
-      ```bash
-      docker-compose exec backend python manage.py createsuperuser
-      ```
+    - Создаём и применяем миграции:
+       ```bash
+       docker-compose exec backend python manage.py makemigrations
+       docker-compose exec backend python manage.py migrate
+       ```
+    - Подключаем статику:
+       ```bash
+       docker-compose exec backend python manage.py collectstatic --no-input
+       ```
+    - Загружаем подготовленные данный в базу данных проекта:
+       ```bash
+       docker-compose exec backend python manage.py loaddata data/fixtures.json
+       ```     
+    - Создаём супер пользователя django:
+       ```bash
+       docker-compose exec backend python manage.py createsuperuser
+       ```
 
-Приведенные выше инструкции по установке и запуску проекта имеют только 
-демонстрационную цель и могут быть использованы только на [localhost](http://localhost/recipes/).
+Приведенные выше инструкция по запуску проекта имеют демонстрационную цель.
+Запущенный проект находится на [локальном сервере](http://localhost/recipes/).
 
 Документация, запустите сервер и перейдите по ссылке: [http://localhost/api/docs/](http://localhost/api/docs/).
 
@@ -145,22 +149,22 @@ POST - 'http://localhost/api/users/'
 ```
 ```yaml
 {
-    "username": "user_username.",
-    "email": "user@mail.ru",
-    "password": "user_password.",
-    "first_name": "user_first_name",
-    "last_name": "user_last_name"
+  "username": "user_username.",
+  "email": "user@mail.ru",
+  "password": "user_password.",
+  "first_name": "user_first_name",
+  "last_name": "user_last_name"
 }
 ```
 
 #### Ответ
 ```yaml
 {
-    "id": 2,
-    "username": "user_username.",
-    "email": "user@mail.ru",
-    "first_name": "user_first_name",
-    "last_name": "user_last_name"
+  "id": 2,
+  "username": "user_username.",
+  "email": "user@mail.ru",
+  "first_name": "user_first_name",
+  "last_name": "user_last_name"
 }
 ```
 
@@ -171,14 +175,14 @@ POST - 'http://localhost/api/auth/token/login/'
 ```
 ```yaml
 {
-    "password": "user_password.",
-    "email": "user@mail.ru"
+  "password": "user_password.",
+  "email": "user@mail.ru"
 }
 ```
 
 #### Ответ
 ```yaml
-{ "auth_token" : "token_value"}
+{ "auth_token": "token_value" }
 ```
 
 ### Получение данных своей учетной записи:
@@ -191,12 +195,12 @@ header 'Authorization: Token "token_value"'
 #### Ответ
 ```yaml
 {
-    "id": 2,
-    "username": "user_username.",
-    "email": "user@mail.ru",
-    "first_name": "user_first_name",
-    "last_name": "user_last_name",
-    "is_subscribed": false
+  "id": 2,
+  "username": "user_username.",
+  "email": "user@mail.ru",
+  "first_name": "user_first_name",
+  "last_name": "user_last_name",
+  "is_subscribed": false
 }
 ```
 
@@ -220,11 +224,11 @@ header 'Authorization: Token "token_value"'
     {
       "id": 267,
       "amount": 30
-    },              
+    },
   ],
   "tags": [
-    1,
-    2
+      1,
+      2
   ],
   "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
   "name": "Кофе с молоком",

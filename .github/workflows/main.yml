@@ -1,4 +1,4 @@
-name: Main
+name: Test
 on:
   push:
     branches:
@@ -14,36 +14,37 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [ "3.7", "3.8", "3.9", "3.10" , "3.11"]
+        python-version: [ "3.7", "3.8", "3.9", "3.10" , "3.11" ]
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
+      - uses: actions/checkout@v3
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install flake8 pep8-naming flake8-broken-line flake8-return
-        pip install -r backend/requirements.txt
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
 
-    - id: run_flake8
-      name: Run flake8
-      env:
-        SECRET_KEY: "${{ secrets.SECRET_KEY }}"
-      run: python -m flake8
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 pep8-naming flake8-broken-line flake8-return
+          pip install -r backend/requirements.txt
 
-    - name: Check on failures
-      if: ${{ failure() && steps.run_flake8.conclusion == 'failure' }}
-      uses: appleboy/telegram-action@master
-      with:
-        to: ${{ secrets.TELEGRAM_USER_ID }}
-        token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-        message: |
-          Ошибка при тестировании - ${{ github.repository }}
-          https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      - id: run_flake8
+        name: Run flake8
+        env:
+          SECRET_KEY: "${{ secrets.SECRET_KEY }}"
+        run: python -m flake8
+
+      - name: Check on failures
+        if: ${{ failure() && steps.run_flake8.conclusion == 'failure' }}
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_USER_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          message: |
+            Ошибка при тестировании - ${{ github.repository }}
+            https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
 #  build_and_push_to_docker_hub:
 #    name: Push Docker image to Docker Hub
@@ -74,37 +75,37 @@ jobs:
 #          cache-to: type=gha, mode=max
 #
 #  deploy:
-#      runs-on: ubuntu-latest
-#      needs: build_and_push_to_docker_hub
-#      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+#    runs-on: ubuntu-latest
+#    needs: build_and_push_to_docker_hub
+#    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 #
-#      steps:
-#        - name: executing remote ssh commands to deploy
-#          uses: appleboy/ssh-action@master
-#          with:
-#            host: ${{ secrets.HOST }}
-#            username: ${{ secrets.USERNAME }}
-#            key: ${{ secrets.SSH_KEY }}
-#            passphrase: ${{ secrets.PASSPHRASE }}
-#            script: |
-#              cd cookbook
-#              sudo docker-compose stop
-#              sudo docker-compose rm backend
-#              sudo docker-compose rm frontend
-#              sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.IMAGE_FRONTEND }}:latest
-#              sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.IMAGE_BACKEND }}:latest
-#              rm .env
-#              touch .env
-#              echo SECRET_KEY="${{ secrets.SECRET_KEY }}" >> .env
-#              echo DEBUG=${{ secrets.DEBUG }} >> .env
-#              echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> .env
-#              echo POSTGRES_ENGINE=${{ secrets.POSTGRES_ENGINE }} >> .env
-#              echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> .env
-#              echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
-#              echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
-#              echo POSTGRES_HOST=${{ secrets.POSTGRES_HOST }} >> .env
-#              echo POSTGRES_PORT=${{ secrets.POSTGRES_PORT }} >> .env
-#              sudo docker-compose up -d --build
+#    steps:
+#      - name: executing remote ssh commands to deploy
+#        uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{ secrets.HOST }}
+#          username: ${{ secrets.USERNAME }}
+#          key: ${{ secrets.SSH_KEY }}
+#          passphrase: ${{ secrets.PASSPHRASE }}
+#          script: |
+#            cd cookbook
+#            sudo docker-compose stop
+#            sudo docker-compose rm backend
+#            sudo docker-compose rm frontend
+#            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.IMAGE_FRONTEND }}:latest
+#            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.IMAGE_BACKEND }}:latest
+#            rm .env
+#            touch .env
+#            echo SECRET_KEY="${{ secrets.SECRET_KEY }}" >> .env
+#            echo DEBUG=${{ secrets.DEBUG }} >> .env
+#            echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> .env
+#            echo POSTGRES_ENGINE=${{ secrets.POSTGRES_ENGINE }} >> .env
+#            echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> .env
+#            echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
+#            echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
+#            echo POSTGRES_HOST=${{ secrets.POSTGRES_HOST }} >> .env
+#            echo POSTGRES_PORT=${{ secrets.POSTGRES_PORT }} >> .env
+#            sudo docker-compose up -d --build
 #
 #  send_message:
 #    runs-on: ubuntu-latest

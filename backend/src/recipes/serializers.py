@@ -34,11 +34,11 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
     author = UserSerializer(read_only=True)
     tags = TagSerializer(read_only=True, many=True)
-    ingredients = IngredientAmountSerializer(
-        source='amounts', many=True, read_only=True)
     is_favorited = serializers.BooleanField(read_only=True)
     is_in_shopping_cart = serializers.BooleanField(read_only=True)
     image = Base64ImageField(max_length=None, use_url=True)
+    ingredients = IngredientAmountSerializer(
+        source='amounts', many=True, read_only=True)
 
     class Meta:
         model = Recipe

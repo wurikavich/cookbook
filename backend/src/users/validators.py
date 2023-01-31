@@ -1,5 +1,6 @@
 import re
 
+from django.conf import settings
 from django.core.exceptions import ValidationError
 
 
@@ -11,5 +12,5 @@ def user_validate_name(value):
 
 def validate_prohibited_name(value):
     """Проверка запрещенных имен."""
-    if value.lower() == "me":
-        raise ValidationError(f'Запрещено использовать {value}!')
+    if value.lower() in settings.FORBIDDEN_NAMES:
+        raise ValidationError(f"Использовать '{value}' запрещено!")

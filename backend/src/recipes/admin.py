@@ -15,8 +15,8 @@ class RecipesAdmin(admin.ModelAdmin):
     """Рецепты."""
     list_display = ('id', 'name', 'author', 'favorited_count')
     list_display_links = ('name',)
-    list_filter = ('name', 'author', 'tags')
-    search_fields = ('author__username', 'name', 'tags__name')
+    list_filter = ('tags',)
+    search_fields = ('name', 'author__username', 'tags__name')
     readonly_fields = ('favorited_count',)
     exclude = ('ingredients',)
     inlines = [IngredientAmountInline]
@@ -26,14 +26,6 @@ class RecipesAdmin(admin.ModelAdmin):
         return obj.readers_recipe.filter(favourites=True).count()
 
     favorited_count.short_description = 'В избранном'
-
-
-@admin.register(IngredientAmount)
-class IngredientRecipeAdmin(admin.ModelAdmin):
-    """Количество ингредиентов в рецепте."""
-    list_display = ('id', 'recipe', 'ingredient', 'amount')
-    list_display_links = ('recipe',)
-    search_fields = ('ingredient__name', 'recipe__name')
 
 
 @admin.register(UserRecipeRelation)
