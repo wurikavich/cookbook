@@ -134,10 +134,10 @@ class UserRecipeRelationSerializer(serializers.ModelSerializer):
         user = data.get('user')
         favourites = data.get('favourites')
         purchases = data.get('purchases')
-        if favourites and user.readers_user.filter(
-                                    recipe=recipe, favourites=True).exists():
+        if favourites and user.readers_user.filter(recipe=recipe,
+                                                   favourites=True).exists():
             raise ValidationError('Рецепт уже добавлен!')
-        if purchases and user.readers_user.filter(
-                                    recipe=recipe, purchases=True).exists():
+        if purchases and user.readers_user.filter(recipe=recipe,
+                                                  purchases=True).exists():
             raise ValidationError('Рецепт уже добавлен!')
         return data
