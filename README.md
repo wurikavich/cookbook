@@ -227,12 +227,12 @@ header 'Authorization: Token "token_value"'
     },
   ],
   "tags": [
-      1,
-      2
+    1,
+    2
   ],
   "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
   "name": "Кофе с молоком",
-  "text": "Вкусные и полезные напитки можно приготовить в домашних условиях."
+  "text": "Вкусные и полезные напитки можно приготовить в домашних условиях.",
   "cooking_time": 15
 }
 ```
@@ -287,7 +287,7 @@ header 'Authorization: Token "token_value"'
   "is_in_shopping_cart": false,
   "name": "Кофе с молоком",
   "image": "http://localhoct/media/recipes/images/20223/01/26/koffe.jpeg",
-  "text": "Вкусные и полезные напитки можно приготовить в домашних условиях."
+  "text": "Вкусные и полезные напитки можно приготовить в домашних условиях.",
   "cooking_time": 15
 }
 ```
@@ -295,7 +295,7 @@ header 'Authorization: Token "token_value"'
 ## Стек технологий
 ### Backend:
 - Python 3.10
-- Django 3.2.16
+- Django 3.2.17
 - Django REST Framework 3.14.0
 
 ### Инфраструктура для запуска:

@@ -49,6 +49,7 @@ class FollowCreateSerializer(serializers.ModelSerializer):
 
 class FollowReadSerializer(serializers.ModelSerializer):
     """Вывод подписок пользователей."""
+
     id = serializers.ReadOnlyField(source='author.id')
     email = serializers.ReadOnlyField(source='author.email')
     username = serializers.ReadOnlyField(source='author.username')
@@ -56,11 +57,11 @@ class FollowReadSerializer(serializers.ModelSerializer):
     last_name = serializers.ReadOnlyField(source='author.last_name')
     recipes_count = serializers.IntegerField(read_only=True)
     is_subscribed = serializers.SerializerMethodField(
-        source='get_is_subscribed',
-        read_only=True)
+        source='get_is_subscribed', read_only=True
+    )
     recipes = serializers.SerializerMethodField(
-        source='get_recipes',
-        read_only=True)
+        source='get_recipes', read_only=True
+    )
 
     class Meta:
         model = Follow

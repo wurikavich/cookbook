@@ -5,14 +5,16 @@ from src.recipes.models import IngredientAmount, Recipe, UserRecipeRelation
 
 class IngredientAmountInline(admin.TabularInline):
     """Добавление ингредиентов в рецепт."""
+
     model = IngredientAmount
     min_num = 1
     extra = 0
 
 
 @admin.register(Recipe)
-class RecipesAdmin(admin.ModelAdmin):
+class RecipeAdmin(admin.ModelAdmin):
     """Рецепты."""
+
     list_display = ('id', 'name', 'author', 'favorited_count')
     list_display_links = ('name',)
     list_filter = ('tags',)
@@ -31,6 +33,7 @@ class RecipesAdmin(admin.ModelAdmin):
 @admin.register(UserRecipeRelation)
 class UserRecipeRelationAdmin(admin.ModelAdmin):
     """Рецепты сохраненные у пользователя."""
+
     list_display = ('id', 'user', 'recipe', 'favourites', 'purchases')
     list_display_links = ('user',)
     list_filter = ('favourites', 'purchases')

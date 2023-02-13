@@ -17,12 +17,15 @@ from src.recipes.serializers import UserRecipeRelationSerializer
 
 def create_or_delete(request, pk, source):
     """Сохранение/удаление рецепта в избранное или список покупок."""
-
     recipe = get_object_or_404(Recipe, pk=pk)
     user = request.user
     if request.method == 'POST':
         serializer = UserRecipeRelationSerializer(
-            data={'user': user.id, 'recipe': recipe.id, source: True},
+            data={
+                'user': user.id,
+                'recipe': recipe.id,
+                source: True
+            },
             context={'request': request}
         )
         serializer.is_valid(raise_exception=True)
@@ -69,4 +72,5 @@ def create_pdf_file(shopping_list):
     page.save()
     buffer.seek(0)
     return FileResponse(
-        buffer, as_attachment=True, filename='Список_покупок.pdf')
+        buffer, as_attachment=True, filename='Список_покупок.pdf'
+    )

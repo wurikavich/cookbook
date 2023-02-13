@@ -4,11 +4,11 @@ from rest_framework import routers
 from src.ingredients.views import IngredientViewSet
 from src.recipes.views import RecipeViewSet
 from src.tags.views import TagViewSet
-from src.users.views import UsersViewSet
+from src.users.views import UserViewSet
 
 router = routers.SimpleRouter()
 
-router.register('users', UsersViewSet, basename='users')
+router.register('users', UserViewSet, basename='users')
 router.register('ingredients', IngredientViewSet, basename='ingredients')
 router.register('tags', TagViewSet, basename='tags')
 router.register('recipes', RecipeViewSet, basename='recipes')

@@ -8,11 +8,15 @@ from rest_framework.response import Response
 from src.base.pagination import CustomPagination
 from src.users.models import Follow, User
 from src.users.serializers import (
-    FollowCreateSerializer, FollowReadSerializer, UserSerializer)
+    FollowCreateSerializer,
+    FollowReadSerializer,
+    UserSerializer,
+)
 
 
-class UsersViewSet(viewsets.GenericViewSet):
+class UserViewSet(viewsets.GenericViewSet):
     """CRUD пользователей."""
+
     queryset = User.objects.all()
     serializer_class = UserSerializer
     pagination_class = CustomPagination
@@ -24,12 +28,14 @@ class UsersViewSet(viewsets.GenericViewSet):
             permission_classes=(IsAuthenticated,))
     def get_subscriptions(self, request):
         """Возвращает список подписок пользователя."""
-        queryset = self.paginate_queryset(request.user.follower.all(
-        ).annotate(recipes_count=Count('author__recipes')).order_by('id'))
+        queryset = self.paginate_queryset(
+            request.user.follower.all()
+            .annotate(recipes_count=Count('author__recipes'))
+            .order_by('id')
+        )
         serializer = FollowReadSerializer(
-            queryset,
-            many=True,
-            context={'request': request})
+            queryset, many=True, context={'request': request}
+        )
         return self.get_paginated_response(serializer.data)
 
     @action(methods=('post', 'delete'),
@@ -39,7 +45,10 @@ class UsersViewSet(viewsets.GenericViewSet):
     def subscribe(self, request, pk):
         """Подписаться/отписаться от пользователя."""
         if request.method == 'POST':
-            data = {'user': request.user.id, 'author': pk}
+            data = {
+                'user': request.user.id,
+                'author': pk
+            }
             context = {'request': request}
             serializer = FollowCreateSerializer(data=data, context=context)
             serializer.is_valid(raise_exception=True)

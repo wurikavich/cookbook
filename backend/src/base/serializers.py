@@ -4,7 +4,7 @@ from src.recipes.models import Recipe
 
 
 class RecipeShortInfoSerializer(serializers.ModelSerializer):
-    """"Вывод необходимых полей рецепта для отображения в профиле юзера."""
+    """Вывод необходимых полей рецепта для отображения в профиле юзера."""
 
     class Meta:
         model = Recipe

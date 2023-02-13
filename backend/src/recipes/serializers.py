@@ -13,16 +13,14 @@ class IngredientAmountSerializer(serializers.ModelSerializer):
     """Вывод необходимых полей ингредиента при запросе рецепта."""
 
     id = serializers.PrimaryKeyRelatedField(
-        source='ingredient',
-        queryset=Ingredient.objects.all())
+        source='ingredient', queryset=Ingredient.objects.all()
+    )
     name = serializers.SlugRelatedField(
-        source='ingredient',
-        slug_field='name',
-        read_only=True)
+        source='ingredient', slug_field='name', read_only=True
+    )
     measurement_unit = serializers.SlugRelatedField(
-        source='ingredient',
-        slug_field='measurement_unit',
-        read_only=True)
+        source='ingredient', slug_field='measurement_unit', read_only=True
+    )
 
     class Meta:
         model = IngredientAmount
@@ -38,7 +36,8 @@ class RecipeReadSerializer(serializers.ModelSerializer):
     is_in_shopping_cart = serializers.BooleanField(read_only=True)
     image = Base64ImageField(max_length=None, use_url=True)
     ingredients = IngredientAmountSerializer(
-        source='amounts', many=True, read_only=True)
+        source='amounts', many=True, read_only=True
+    )
 
     class Meta:
         model = Recipe
@@ -59,10 +58,10 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 class RecipeCreateSerializer(RecipeReadSerializer):
     """CRUD рецептов."""
 
-    tags = serializers.PrimaryKeyRelatedField(
-        queryset=Tag.objects.all(),
-        many=True)
     ingredients = IngredientAmountSerializer(many=True)
+    tags = serializers.PrimaryKeyRelatedField(
+        queryset=Tag.objects.all(), many=True
+    )
 
     def create(self, validated_data):
         request = self.context.get('request')
@@ -123,7 +122,7 @@ class RecipeCreateSerializer(RecipeReadSerializer):
 
 
 class UserRecipeRelationSerializer(serializers.ModelSerializer):
-    """Валидация данных при добавление рецепта в избранное или корзину."""
+    """Валидация данных при добавлении рецепта в избранное или корзину."""
 
     class Meta:
         model = UserRecipeRelation

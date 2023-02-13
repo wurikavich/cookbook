@@ -4,7 +4,7 @@ from src.ingredients.models import Ingredient
 
 
 class IngredientSerializer(serializers.ModelSerializer):
-    """Вывод информации о ингредиенте."""
+    """Вывод информации об ингредиенте."""
 
     class Meta:
         model = Ingredient

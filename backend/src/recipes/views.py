@@ -9,12 +9,15 @@ from src.base.pagination import CustomPagination
 from src.base.permissions import IsAuthorOrAdminOrReadOnly
 from src.recipes.models import IngredientAmount, Recipe
 from src.recipes.serializers import (
-    RecipeCreateSerializer, RecipeReadSerializer)
+    RecipeCreateSerializer,
+    RecipeReadSerializer
+)
 from src.recipes.utils import create_or_delete, create_pdf_file
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
     """CRUD рецептов."""
+
     pagination_class = CustomPagination
     permission_classes = (IsAuthorOrAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
@@ -24,13 +27,18 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if self.request.user.is_authenticated:
             return Recipe.objects.all().annotate(
                 is_favorited=Exists(self.request.user.readers_user.filter(
-                    recipe=OuterRef('id'), favourites=True)),
+                    recipe=OuterRef('id'), favourites=True)
+                ),
                 is_in_shopping_cart=Exists(
                     self.request.user.readers_user.filter(
-                        recipe=OuterRef('id'), purchases=True))
+                        recipe=OuterRef('id'), purchases=True)
+                )
             ).select_related('author').prefetch_related('ingredients', 'tags')
-        return Recipe.objects.all().select_related('author').prefetch_related(
-            'ingredients', 'tags')
+        return (
+            Recipe.objects.all()
+            .select_related('author')
+            .prefetch_related('ingredients', 'tags')
+        )
 
     def get_serializer_class(self):
         """Переопределение выбора сериализатора."""
@@ -44,7 +52,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
             permission_classes=(IsAuthenticated,))
     def set_favorite(self, request, pk):
         """Добавить/удалить рецепт в избранном."""
-
         return create_or_delete(request, pk, source='favourites')
 
     @action(detail=True,
@@ -53,7 +60,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
             permission_classes=(IsAuthenticated,))
     def set_shopping_cart(self, request, pk):
         """Добавить/удалить рецепт в список покупок."""
-
         return create_or_delete(request, pk, source='purchases')
 
     @action(detail=False,
@@ -62,10 +68,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
             permission_classes=(IsAuthenticated,))
     def set_download_shopping_cart(self, request):
         """Собрать необходимые данные для формирования список покупок."""
-        shopping_list = IngredientAmount.objects.filter(
-            recipe__id__in=request.user.readers_user.filter(
-                purchases=True).values_list('recipe', flat=True)
-        ).values_list(
-            'ingredient__name', 'ingredient__measurement_unit'
-        ).order_by('ingredient__name').annotate(total=Sum('amount'))
+        shopping_list = (
+            IngredientAmount.objects.filter(
+                recipe__id__in=request.user.readers_user.filter(purchases=True)
+                .values_list('recipe', flat=True)
+            )
+            .values_list('ingredient__name', 'ingredient__measurement_unit')
+            .order_by('ingredient__name')
+            .annotate(total=Sum('amount'))
+        )
         return create_pdf_file(shopping_list)

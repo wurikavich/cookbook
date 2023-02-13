@@ -113,8 +113,10 @@ class IngredientAmount(models.Model):
         ]
 
     def __str__(self):
-        return (f'Количество "{self.ingredient}" в рецепте "{self.recipe}" -'
-                f' {self.amount} {self.ingredient.measurement_unit}.')
+        return (
+            f'Количество "{self.ingredient}" в рецепте "{self.recipe}" -'
+            f' {self.amount} {self.ingredient.measurement_unit}.'
+        )
 
 
 class UserRecipeRelation(models.Model):

@@ -8,6 +8,7 @@ from src.ingredients.serializers import IngredientSerializer
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     """CRUD ингредиентов."""
+
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     permission_classes = (IsAdminOrReadOnly,)

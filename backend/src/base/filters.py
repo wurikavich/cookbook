@@ -15,14 +15,15 @@ class IngredientSearchFilter(SearchFilter):
 class RecipeFilter(filters.FilterSet):
     """Поиск рецептов и тегов."""
 
+    author = filters.ModelChoiceFilter(queryset=User.objects.all())
+    is_favorited = filters.BooleanFilter(method='filter_bool')
+    is_in_shopping_cart = filters.BooleanFilter(method='filter_bool')
     tags = filters.ModelMultipleChoiceFilter(
         field_name='tags__slug',
         to_field_name='slug',
         queryset=Tag.objects.all(),
-        label='Tags')
-    author = filters.ModelChoiceFilter(queryset=User.objects.all())
-    is_favorited = filters.BooleanFilter(method='filter_bool')
-    is_in_shopping_cart = filters.BooleanFilter(method='filter_bool')
+        label='Tags'
+    )
 
     class Meta:
         model = Recipe
